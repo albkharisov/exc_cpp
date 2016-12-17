@@ -30,6 +30,28 @@ struct Rational
 
     void priv();
 
+    const Rational& operator+() const{
+        return *this;
+    }
+
+    const Rational operator-() const{
+        Rational rt = *this;
+        rt.neg();
+        return rt;
+    }
+
+
+
+//    const Rational& operator+(const Rational& r) {
+//        return r;
+//    }
+//
+//    const Rational operator-(Rational r) const{
+//        r.inv();
+//        return r;
+//    }
+
+
 //    Point getpoint() { return pt; };
 //    Point & getpoints() { return pt; };
 //    Point pt;
@@ -41,11 +63,6 @@ private:
 double Rational::to_double() const
 {
     return numerator_/denominator_;
-}
-
-std::ostream& operator<<(std::ostream &os, Rational &r)
-{
-    os << r.getnum() << '/' << r.getden();
 }
 
 Rational::Rational(int numerator, int denominator)
@@ -118,30 +135,37 @@ void Rational::inv()
     numerator_ -= denominator_;
 }
 
-Rational & operator+(Rational r1, Rational r2)
+//=========================================================================
+Rational operator+(Rational r1, Rational r2)
 {
     r1.add(r2);
     return r1;
 }
 
-Rational & operator-(Rational r1, Rational r2)
+explicit Rational operator-(Rational r1, Rational r2)
 {
     r1.sub(r2);
     return r1;
 }
 
-Rational & operator*(Rational r1, Rational r2)
+Rational operator*(Rational r1, Rational r2)
 {
     r1.mul(r2);
     return r1;
 }
 
-Rational & operator/(Rational r1, Rational r2)
+Rational operator/(Rational r1, Rational r2)
 {
     r1.div(r2);
     return r1;
 }
-
+//=========================================================================
+//Rational & operator+(Rational r1, Rational r2)
+//{
+//    r1.getnum() += i * r1.getden();
+//    return r1;
+//}
+//=========================================================================
 Rational & operator+=(Rational &r1, Rational r2)
 {
     r1 = r1 + r2;
@@ -166,6 +190,12 @@ Rational & operator/=(Rational &r1, Rational r2)
     return r1;
 }
 
+std::ostream& operator<<(std::ostream &os, Rational &r)
+{
+    os << r.getnum() << '/' << r.getden();
+    return os;
+}
+
 int main()
 {
     Rational rat1(4,6);
@@ -178,8 +208,15 @@ int main()
     cout << "rat3:" << rat3 << endl;
     cout << "rat4:" << rat4 << endl;
     cout << "========" << endl;
+
+    -rat1;
+    cout << "rat1:" << rat1 << endl;
+    rat1 = -rat1;
+    cout << "rat1:" << rat1 << endl;
+
 //    rat2 = rat2 + rat2;
-    cout << rat1 << " - " << rat2 << " = " << rat1 - rat2 << endl;
+    rat3 = rat1 - rat2;
+    cout << rat1 << " - " << rat2 << " = " << rat3 << endl;
 
 
 
