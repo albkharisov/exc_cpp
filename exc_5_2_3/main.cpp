@@ -5,30 +5,58 @@
 
 using namespace std;
 
-struct Point
-{
-    Point (int x = 0, int y = 0) : x(x), y(y) {};
-    int x;
-    int y;
-    int getdx() { return x += 2; };
-};
+//std::ostream& operator<<(std::ostream &os, Rational r);
 
+//====================================================================================
 struct Rational
 {
-    Rational(int numerator = 0, int denominator = 1);
 
-    void add(Rational rt);
-    void sub(Rational rt);
-    void mul(Rational rt);
-    void div(Rational rt);
-    void neg();
-    void inv();
-    double to_double() const;
+    Rational(int numerator = 0, int denominator = 1) : numerator_(numerator), denominator_(denominator)
+    {
+        priv();
+    };
 
-    int & getnum();
-    int & getden();
+    void priv(void);
 
-    void priv();
+    int getnum(void)
+    {
+        return numerator_;
+    }
+
+    int getden(void)
+    {
+        return denominator_;
+    }
+
+    void add(Rational rational) {
+        numerator_ = numerator_ * rational.denominator_ + rational.numerator_ * denominator_;
+        denominator_ *= rational.denominator_;
+    }
+
+    void sub(Rational rational) {
+        numerator_ = numerator_ * rational.denominator_ - rational.numerator_ * denominator_;
+        denominator_ *= rational.denominator_;
+    }
+
+    void mul(Rational rational) {
+        numerator_ *= rational.numerator_;
+        denominator_ *= rational.denominator_;
+    }
+
+    void div(Rational rational) {
+        numerator_ *= rational.denominator_;
+        denominator_ *= rational.numerator_;
+    }
+
+    void neg() {
+        numerator_ = -numerator_;
+    }
+
+    void inv() {}
+
+    double to_double() const {
+        return numerator_ / (double) denominator_;
+    }
 
     const Rational& operator+() const{
         return *this;
@@ -40,36 +68,21 @@ struct Rational
         return rt;
     }
 
+    Rational& operator+=(Rational rational);
+    Rational& operator-=(Rational rational);
+    Rational& operator*=(Rational rational);
+    Rational& operator/=(Rational rational);
 
-
-//    const Rational& operator+(const Rational& r) {
-//        return r;
-//    }
-//
-//    const Rational operator-(Rational r) const{
-//        r.inv();
-//        return r;
-//    }
-
-
-//    Point getpoint() { return pt; };
-//    Point & getpoints() { return pt; };
-//    Point pt;
 private:
     int numerator_;
     int denominator_;
 };
 
-double Rational::to_double() const
+std::ostream& operator<<(std::ostream &os, Rational r)
 {
-    return numerator_/denominator_;
+    os << r.getnum() << '/' << r.getden();
+    return os;
 }
-
-Rational::Rational(int numerator, int denominator)
-                    : numerator_(numerator), denominator_(denominator)
-{
-    priv();
-};
 
 void Rational::priv()
 {
@@ -90,59 +103,13 @@ void Rational::priv()
     denominator_ /= nod;
 }
 
-int & Rational::getnum() { return numerator_; };
-int & Rational::getden() { return denominator_; };
-
-void Rational::add(Rational rt)
-{
-    rt.numerator_ *= denominator_;
-    numerator_ *= rt.denominator_;
-    numerator_ += rt.numerator_;
-    denominator_ *= rt.denominator_;
-    priv();
-}
-
-void Rational::sub(Rational rt)
-{
-    rt.numerator_ *= denominator_;
-    numerator_ *= rt.denominator_;
-    numerator_ -= rt.numerator_;
-    denominator_ *= rt.denominator_;
-    priv();
-}
-void Rational::mul(Rational rt)
-{
-    numerator_ *= rt.numerator_;
-    denominator_ *= rt.denominator_;
-    priv();
-}
-void Rational::div(Rational rt)
-{
-    numerator_ *= rt.denominator_;
-    denominator_ *= rt.numerator_;
-    priv();
-}
-
-void Rational::neg()
-{
-    numerator_ = -numerator_;
-}
-
-void Rational::inv()
-{
-    numerator_ += denominator_;
-    denominator_ = numerator_ - denominator_;
-    numerator_ -= denominator_;
-}
-
-//=========================================================================
 Rational operator+(Rational r1, Rational r2)
 {
     r1.add(r2);
     return r1;
 }
 
-explicit Rational operator-(Rational r1, Rational r2)
+Rational operator-(Rational r1, Rational r2)
 {
     r1.sub(r2);
     return r1;
@@ -159,13 +126,7 @@ Rational operator/(Rational r1, Rational r2)
     r1.div(r2);
     return r1;
 }
-//=========================================================================
-//Rational & operator+(Rational r1, Rational r2)
-//{
-//    r1.getnum() += i * r1.getden();
-//    return r1;
-//}
-//=========================================================================
+
 Rational & operator+=(Rational &r1, Rational r2)
 {
     r1 = r1 + r2;
@@ -190,12 +151,6 @@ Rational & operator/=(Rational &r1, Rational r2)
     return r1;
 }
 
-std::ostream& operator<<(std::ostream &os, Rational &r)
-{
-    os << r.getnum() << '/' << r.getden();
-    return os;
-}
-
 int main()
 {
     Rational rat1(4,6);
@@ -216,7 +171,7 @@ int main()
 
 //    rat2 = rat2 + rat2;
     rat3 = rat1 - rat2;
-    cout << rat1 << " - " << rat2 << " = " << rat3 << endl;
+    cout << rat1 << " - " << rat2 << " = " << rat1 - rat2 << endl;
 
 
 
