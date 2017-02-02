@@ -18,12 +18,12 @@ struct Rational
 
     void priv(void);
 
-    int getnum(void)
+    int & getnum(void)
     {
         return numerator_;
     }
 
-    int getden(void)
+    int & getden(void)
     {
         return denominator_;
     }
@@ -54,7 +54,7 @@ struct Rational
 
     void inv() {}
 
-    double to_double() const {
+    const double to_double() const {
         return numerator_ / (double) denominator_;
     }
 
@@ -72,6 +72,11 @@ struct Rational
     Rational& operator-=(Rational rational);
     Rational& operator*=(Rational rational);
     Rational& operator/=(Rational rational);
+
+    operator double () const
+    {
+        return to_double();
+    }
 
 private:
     int numerator_;
@@ -151,6 +156,40 @@ Rational & operator/=(Rational &r1, Rational r2)
     return r1;
 }
 
+
+
+
+bool operator>(Rational r1, Rational r2)
+{
+    return (r1 - r2).getnum() > 0;
+}
+
+bool operator<(Rational r1, Rational r2)
+{
+    return r2 > r1;
+}
+
+bool operator==(Rational r1, Rational r2)
+{
+    return (!(r1 > r2) && !(r2 > r1));
+}
+
+bool operator!=(Rational r1, Rational r2)
+{
+    return !(r1 == r2);
+}
+
+bool operator<=(Rational r1, Rational r2)
+{
+    return (r1 < r2) || (r1 == r2);
+}
+
+bool operator>=(Rational r1, Rational r2)
+{
+    return (r1 > r2) || (r1 == r2);
+}
+
+
 int main()
 {
     Rational rat1(4,6);
@@ -168,28 +207,57 @@ int main()
     cout << "rat1:" << rat1 << endl;
     rat1 = -rat1;
     cout << "rat1:" << rat1 << endl;
+//    cout << "rat1.num:" << rat1.getnum() << endl;
+//    cout << "rat1.den:" << rat1.getden() << endl;
 
 //    rat2 = rat2 + rat2;
     rat3 = rat1 - rat2;
+
+    Rational rat5;
+    rat5 = rat1 - rat2;
+
     cout << rat1 << " - " << rat2 << " = " << rat1 - rat2 << endl;
+    cout << rat1 << " - " << rat2 << " = " << rat5 << endl;
+    cout << "rat5.getden() = " << rat5.getden() << endl;
+    cout << rat1 << " - " << rat2 << " = " << rat5 << endl;
+
+    cout << "=====" << endl;
+    cout << rat1 << " > " << rat2 << " = " << (rat1 > rat2) << endl;
+    cout << rat2 << " > " << rat1 << " = " << (rat2 > rat1) << endl;
 
 
+    cout << "rat1 (" << rat1 << ") " << ">" << " rat2 (" << rat2 << ") = " << (rat1 > rat2) << endl;
+    cout << "rat1 (" << rat1 << ") " << ">=" << " rat2 (" << rat2 << ") = " << (rat1 >= rat2) << endl;
+    cout << "rat1 (" << rat1 << ") " << "<" << " rat2 (" << rat2 << ") = " << (rat1 < rat2) << endl;
+    cout << "rat1 (" << rat1 << ") " << "<=" << " rat2 (" << rat2 << ") = " << (rat1 <= rat2) << endl;
+    cout << "rat1 (" << rat1 << ") " << "!=" << " rat2 (" << rat2 << ") = " << (rat1 != rat2) << endl;
+    cout << "rat1 (" << rat1 << ") " << "==" << " rat2 (" << rat2 << ") = " << (rat1 == rat2) << endl;
 
-//    rat2 -= rat1;
-//    cout << "rat2:" << rat2 << endl;
+    cout << "============" << endl;
 
-//    rat2 = rat2*rat2;
-//    cout << "rat2:" << rat2 << endl;
+    rat1.getnum() = 5;
+    rat1.getden() = 7;
+    int a = 3;
+//    cout << "rat1 (" << rat1 << ") " << ">" << " 3 = " << (rat1 > a) << endl;
+//    cout << "3 " << ">" << " rat1 (" << rat1 << ") = " << (a > rat1) << endl;
 //
-//    rat2 = rat2/rat2;
-//    cout << "rat2:" << rat2 << endl;
+//    cout << "rat1 (" << rat1 << ") " << ">" << " 2 = " << (rat1 > 2) << endl;
+//    cout << "rat1 (" << rat1 << ") " << ">=" << " 2 = " << (rat1 >= 2) << endl;
+//    cout << "rat1 (" << rat1 << ") " << "<" << " 2 = " << (rat1 < 2) << endl;
+//    cout << "rat1 (" << rat1 << ") " << "<=" << " 2 = " << (rat1 <= 2) << endl;
+//    cout << "rat1 (" << rat1 << ") " << "!=" << " 2 = " << (rat1 != 2) << endl;
+//    cout << "rat1 (" << rat1 << ") " << "==" << " 2 = " << (rat1 == 2) << endl;
+//
+//
+//    cout << "(rat1 - 2).getnum() = " << ((rat1 - 2).getnum()) << endl;
+//
+//    if ((rat1 - 2).getnum() == 0)
+//        cout << "(r1 - r2).getnum() == 0";
+//    else
+//        cout << "(r1 - r2).getnum() != 0";
+//
+    cout << "rat1 = " << rat1 << "(" << (double)rat1 << ")" << endl;
 
-
-
-//    rat.getpoints().x = 1;
-//    cout << rat.getpoint().getdx() << endl;
-
-//    cout << "Hello world!" << endl;
     return 0;
 }
 
