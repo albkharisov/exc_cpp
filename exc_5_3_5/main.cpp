@@ -92,28 +92,23 @@ struct SharedPtr
     SharedPtr& operator=(SharedPtr& other)
     {
         cout << "1 SharedPtr " << ptr_ << " , " << PCI_CNT_ << " == " <<
-                                         " " << other.ptr_ << " , " << (other.pci.cnt_ ? *other.pci.cnt_ : 0) << endl;
+                    " " << other.ptr_ << " , " << (other.pci.cnt_ ? *other.pci.cnt_ : 0) << endl;
 	    if (this != &other)
         {
             if (other.ptr_)
-            {
-                cout << "incr other" << endl;
                 ++other.pci;
-            }
             if (this->ptr_)
             {
-                cout << "incr this" << endl;
-                --this->pci;
+                decrease_and_free();
             }
 
-            cout << "lets" << endl;
             this->pci = other.pci;
             this->ptr_ = other.ptr_;
         }
         else
             cout << "nothing to set" << endl;
         cout << "2 SharedPtr " << ptr_ << " , " << PCI_CNT_ << " == " <<
-                                         " " << other.ptr_ << " , " << *other.pci.cnt_ << endl;
+                    " " << other.ptr_ << " , " << (other.pci.cnt_ ? *other.pci.cnt_ : 0) << endl;
         return *this;
     }
 
@@ -144,17 +139,7 @@ struct SharedPtr
         cout << "=========" << endl << "destructor: ptr_= " << ptr_ << " *cnt= " << PCI_CNT_ << endl;
         if (ptr_ != 0)
         {
-            if (!--pci)
-            {
-                cout << "free ptr" << endl;
-                delete ptr_;
-                cout << "free cnt" << endl;
-                delete pci.cnt_;
-                ptr_ = 0;
-                pci.cnt_ = 0;
-            }
-            else
-                cout << "NO free ptr_, *cnt_= " << PCI_CNT_ << endl;
+            decrease_and_free();
         }
         else
             cout << "nothing to destruct" << endl;
@@ -204,10 +189,29 @@ struct SharedPtr
 
 private:
     pc pci;
+
+    bool decrease_and_free()
+    {
+        if (!--pci)
+        {
+            cout << "free ptr" << endl;
+            delete ptr_;
+            cout << "free cnt" << endl;
+            delete pci.cnt_;
+            ptr_ = 0;
+            pci.cnt_ = 0;
+            return true;
+        }
+        else
+            return false;
+    }
 };
 
 
-
+void func(SharedPtr gav)
+{
+    gav->a = 18;
+}
 
 int main()
 {
@@ -222,11 +226,13 @@ int main()
         q = p;
         q->a = 17;
         SharedPtr r((Expression *) 0);
-        cout << "important" << endl;
 //        r = p;
 //        r = q;
         q = r;
+        r = p;
     }
+
+    func(p);
 
     cout << "p->a = " << p->a << endl;
 //    cout << "q->a = " << q->a << endl;
