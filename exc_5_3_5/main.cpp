@@ -90,8 +90,8 @@ struct SharedPtr
                     : pci(other.pci.cnt_), ptr_(other.ptr_)
     {
         cout << "SharedPtr const copy: ptr_= " << ptr_ << " cnt= " << *pci.cnt_;
-        ++pci;
-//        ++pci;
+        if (ptr_)
+            ++pci;
         cout << " after(" << *pci.cnt_ << ")" << endl;
     }
 
@@ -190,20 +190,17 @@ private:
 
 int main()
 {
-    Expression *a = new Expression;
-    cout << "a = " << a << endl;
-    a->a = 2;
-    cout << "a->a = " << a->a << endl;
+//    SharedPtr p(new Expression);
+    SharedPtr p((Expression *) 0);
+//    p->a = 3;
 
-    SharedPtr p(a);
-//    SharedPtr q(a);
-    SharedPtr q;
-    q = p;
-    a->a = 17;
+//    p.ptr_ = 0;
+//    cout << "p->a = " << p->a << endl;
+    SharedPtr q = p;
+//    q->a = 17;
 
-    cout << "a->a = " << a->a << endl;
-    cout << "p->a = " << p->a << endl;
-    cout << "q->a = " << q->a << endl;
+//    cout << "p->a = " << p->a << endl;
+//    cout << "q->a = " << q->a << endl;
 
     return 0;
 }
