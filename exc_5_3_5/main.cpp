@@ -228,9 +228,9 @@ int main()
     SharedPtr p2;
 //    SharedPtr p((Expression *) 0);
     p->a = 3;
-    p2 = p;
-    p.reset();
-    p->a = 5;
+//    p2 = p;
+    p.release();
+    p2.release();
 //    p2.reset();
 
     #if 0
