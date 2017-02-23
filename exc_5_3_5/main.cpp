@@ -124,9 +124,9 @@ struct SharedPtr
     explicit SharedPtr(Expression *ptr = 0)
                         : ptr_(ptr) /*, pci((int *) ptr)*/
     {
-        cout << endl << __FUNCTION__ << endl << endl;
         if (ptr)
         {
+            cout << "____ NEW PTR ____ " << ptr_ << endl;
             pci = new int;
             pci = 1;
         }
@@ -194,9 +194,8 @@ private:
     {
         if (!--pci)
         {
-            cout << "free ptr" << endl;
+            cout << "____ FREE PTR ____ " << ptr_ << endl;
             delete ptr_;
-            cout << "free cnt" << endl;
             delete pci.cnt_;
             ptr_ = 0;
             pci.cnt_ = 0;
@@ -217,24 +216,30 @@ int main()
 {
 
     SharedPtr p(new Expression);
+    SharedPtr p2(new Expression);
 //    SharedPtr p((Expression *) 0);
     p->a = 3;
 
+    SharedPtr q2(new Expression);
+    p2 = q2;
+
     {
         cout << "p->a = " << p->a << endl;
-        SharedPtr q = p;
+        SharedPtr q;
         q = p;
         q->a = 17;
         SharedPtr r((Expression *) 0);
 //        r = p;
 //        r = q;
         q = r;
-        r = p;
+        p = r;
+
+        r = p2;
     }
 
-    func(p);
+//    func(p);
 
-    cout << "p->a = " << p->a << endl;
+//    cout << "p->a = " << p->a << endl;
 //    cout << "q->a = " << q->a << endl;
 
     return 0;
