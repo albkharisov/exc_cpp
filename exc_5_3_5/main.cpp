@@ -12,9 +12,16 @@ int operator--(pc &);
 
 struct pc
 {
-    pc& operator=(int * cnt)
+    pc& operator=(const pc &other)
     {
-        cnt_ = cnt;
+        cnt_ = other.cnt_;
+        cout << "pc (&pc)operator=, cnt_ = " << cnt_ << " *cnt_ = " << *cnt_ << endl;
+        return *this;
+    }
+
+    pc& operator=(const int * pcnt)
+    {
+        cnt_ = pcnt;
         cout << "pc (*cnt)operator=, cnt_ = " << cnt_ << " *cnt_ = " << *cnt_ << endl;
         return *this;
     }
@@ -26,18 +33,8 @@ struct pc
         return *this;
     }
 
-    explicit pc(int *cnt = 0)
+    explicit pc(int *cnt = 0) : cnt_(cnt)
     {
-        if (cnt == 0)
-        {
-//            cnt = new int;
-            cnt_ = new int;
-            *cnt_ = 0;
-            cout << "new cnt_ = " << cnt_ << endl;
-        }
-        else
-            cnt_ = cnt;
-
         cout << "pc constructor: cnt_ = " << cnt_ << ", *cnt_ = " << *cnt_ << endl;
     }
 
@@ -86,6 +83,25 @@ struct BinaryOperation : Expression
 
 struct SharedPtr
 {
+    SharedPtr& operator=(SharedPtr& other)
+    {
+        cout << "1 SharedPtr op=: other.ptr= " << other.ptr_ << " other.pci= " << *other.pci.cnt_ <<
+                                         " this->ptr= " << ptr_ << " this.pci= " << *pci.cnt_ << endl;
+	    if (this != &other)
+        {
+            if (other.ptr_)
+                ++other.pci;
+            if (*this->ptr_)
+                --this->pci;
+
+            this->pci = other.pci;
+            this->ptr_ = other.ptr_;
+        }
+        cout << "2 SharedPtr op=: other.ptr= " << other.ptr_ << " other.pci= " << *other.pci.cnt_ <<
+                                         " this->ptr= " << ptr_ << " this.pci= " << *pci.cnt_ << endl;
+        return *this;
+    }
+
     SharedPtr(const SharedPtr& other)
                     : pci(other.pci.cnt_), ptr_(other.ptr_)
     {
@@ -98,12 +114,9 @@ struct SharedPtr
     explicit SharedPtr(Expression *ptr = 0)
                         : ptr_(ptr)
     {
-        if (ptr == 0)
+        if (ptr)
         {
-            pci = 0;
-        }
-        else
-        {
+            pci = new int;
             pci = 1;
         }
 
@@ -120,6 +133,7 @@ struct SharedPtr
                 cout << "free ptr" << endl;
                 delete ptr_;
                 ptr_ = 0;
+                pci.cnt_ = 0;
             }
             else
                 cout << "NO free ptr_, *cnt_= " << *pci.cnt_ << endl;
@@ -145,28 +159,14 @@ struct SharedPtr
     void reset(Expression *ptr = 0)
     {
         cout << endl << __FUNCTION__ << endl << endl;
-        --pci;
+        if (ptr_)
+            --pci;
+
         if (ptr != 0)
             ptr_ = ptr;
         else
             ptr_ = new Expression;
         pci = 1;
-    }
-
-    SharedPtr& operator=(SharedPtr& other)
-    {
-        cout << "1 SharedPtr op=: other.ptr= " << other.ptr_ << " other.pci= " << *other.pci.cnt_ <<
-                                         " this->ptr= " << ptr_ << " this.pci= " << *pci.cnt_ << endl;
-	    if (this != &other)
-        {
-            ++other.pci;
-            --this->pci;
-            this->pci = other.pci;
-            this->ptr_ = other.ptr_;
-        }
-        cout << "2 SharedPtr op=: other.ptr= " << other.ptr_ << " other.pci= " << *other.pci.cnt_ <<
-                                         " this->ptr= " << ptr_ << " this.pci= " << *pci.cnt_ << endl;
-        return *this;
     }
 
     Expression& operator*() const
