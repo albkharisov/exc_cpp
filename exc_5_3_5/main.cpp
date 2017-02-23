@@ -91,21 +91,28 @@ struct SharedPtr
 {
     SharedPtr& operator=(SharedPtr& other)
     {
-        cout << "1 SharedPtr " << other.ptr_ << " , " << PCI_CNT_ << " == " <<
-                                         " " << other.ptr_ << " , " << *other.pci.cnt_ << endl;
+        cout << "1 SharedPtr " << ptr_ << " , " << PCI_CNT_ << " == " <<
+                                         " " << other.ptr_ << " , " << (other.pci.cnt_ ? *other.pci.cnt_ : 0) << endl;
 	    if (this != &other)
         {
             if (other.ptr_)
+            {
+                cout << "incr other" << endl;
                 ++other.pci;
+            }
             if (this->ptr_)
+            {
+                cout << "incr this" << endl;
                 --this->pci;
+            }
 
+            cout << "lets" << endl;
             this->pci = other.pci;
             this->ptr_ = other.ptr_;
         }
         else
             cout << "nothing to set" << endl;
-        cout << "2 SharedPtr " << other.ptr_ << " , " << PCI_CNT_ << " == " <<
+        cout << "2 SharedPtr " << ptr_ << " , " << PCI_CNT_ << " == " <<
                                          " " << other.ptr_ << " , " << *other.pci.cnt_ << endl;
         return *this;
     }
@@ -216,7 +223,8 @@ int main()
         q->a = 17;
         SharedPtr r((Expression *) 0);
         cout << "important" << endl;
-        r = p;
+//        r = p;
+//        r = q;
         q = r;
     }
 
