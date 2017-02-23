@@ -156,8 +156,12 @@ struct SharedPtr
     {
         cout << endl << __FUNCTION__ << endl << endl;
         Expression *ptr_tmp = ptr_;
+        if (ptr_ != 0)
+        {
+            decrease_and_free();
+        }
         ptr_ = 0;
-        --pci;
+        pci = 0;
         return ptr_tmp;
     }
 
@@ -165,13 +169,18 @@ struct SharedPtr
     void reset(Expression *ptr = 0)
     {
         cout << endl << __FUNCTION__ << endl << endl;
-        if (ptr_)
-            --pci;
+        if (ptr_ != 0)
+        {
+            decrease_and_free();
+        }
 
         if (ptr != 0)
             ptr_ = ptr;
         else
             ptr_ = new Expression;
+        cout << "____ NEW PTR ____ " << ptr_ << endl;
+
+        pci = new int;
         pci = 1;
     }
 
@@ -216,10 +225,15 @@ int main()
 {
 
     SharedPtr p(new Expression);
-    SharedPtr p2(new Expression);
+    SharedPtr p2;
 //    SharedPtr p((Expression *) 0);
     p->a = 3;
+    p2 = p;
+    p.reset();
+    p->a = 5;
+//    p2.reset();
 
+    #if 0
     SharedPtr q2(new Expression);
     p2 = q2;
 
@@ -238,7 +252,7 @@ int main()
     }
 
 //    func(p);
-
+#endif
 //    cout << "p->a = " << p->a << endl;
 //    cout << "q->a = " << q->a << endl;
 
