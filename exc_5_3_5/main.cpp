@@ -5,6 +5,64 @@ using namespace std;
 struct Expression;
 struct Number;
 struct BinaryOperation;
+typedef struct pc;
+
+int operator++(pc &pc1);
+int operator--(const pc &pc1);
+
+struct pc
+{
+//    pc& operator=(const pc &other);
+    pc& operator=(int cnt)
+    {
+        *(this->cnt_) = cnt;
+        return *this;
+    }
+
+    pc(Expression *ptr, int *cnt = 0)
+    {
+        if (cnt == 0)
+            cnt = new int;
+        if (ptr == 0)
+            pc = (int) 0;
+        else
+            pc.ptr_ = ptr;
+
+        cnt_ = new int;
+        *cnt_ = cnt;
+    }
+
+    ~pc()
+    {
+        if (cnt_)
+            delete cnt_;
+    }
+
+    Expression *ptr_;
+//    private:
+    int *cnt_;
+};
+
+int operator++(pc &pc1)
+{
+    if (pc1.ptr_)
+        ++pc1.cnt_;
+    return pc1.cnt_;
+}
+
+int operator--(const struct pc &pc1)
+{
+    if (pc1.ptr_)
+    {
+        --pc1.cnt_;
+        if (pc1.cnt == 0)
+        {
+            delete pc1.ptr_;
+            pc1.ptr_ = 0;
+        }
+    }
+    return pc1.cnt;
+}
 
 struct Expression
 {
@@ -102,11 +160,24 @@ struct SharedPtr
         return *this;
     }
 #endif
+//	String &operator=(const String &other)
+//    {
+//        cout << "oper_=" << endl;
+//	    if (this != &other)
+//        {
+//            delete [] str;
+//            size = other.size;
+//            str = new char [size+1];
+//            str[size] = 0;
+//            memcpy(str, other.str, size);
+//        }
+//	}
+
     SharedPtr& operator=(const SharedPtr& other)
     {
 	    if (this != &other)
         {
-            ++other.pci;
+            ++(other.pci);
             --this.pci;
             this.pci = other.pci;
             this.pci.ptr_ = other.pci.ptr_;
@@ -114,62 +185,8 @@ struct SharedPtr
         return *this;
     }
 
-    struct pc
-    {
-        pc(Expression *ptr, int *cnt = 0)
-        {
-            if (cnt == 0)
-                cnt = new int;
-            if (ptr == 0)
-                pc = 0;
-            else
-                pc.ptr_ = ptr;
-
-            cnt_ = new int;
-            *cnt_ = cnt;
-        }
-
-        ~pc()
-        {
-            if (cnt_)
-                delete cnt_;
-        }
-
-        int operator++(void)
-        {
-            if (pc.ptr_)
-                ++pc.cnt_;
-            return pc.cnt_;
-        }
-
-        int operator--(void)
-        {
-
-            if (pc.ptr_)
-            {
-                --pc.cnt_;
-                if (pc.cnt == 0)
-                {
-                    delete pc.ptr_;
-                    pc.ptr_ = 0;
-                }
-            }
-            return pc.cnt;
-        }
-
-        pc& operator=(int cnt)
-        {
-            this->cnt_ = cnt;
-            return *this;
-        }
-
-        Expression *ptr_;
-    private:
-        int *cnt_;
-    };
-    pc pci;
+    struct pc pci;
 };
-
 
 
 
