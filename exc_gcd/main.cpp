@@ -77,7 +77,7 @@ unsigned mangcd(unsigned a, unsigned b)
 
 }
 
-unsigned int strlen(unsigned char * str)
+unsigned strlen(const char * str)
 {
     unsigned int i = 0;
 
@@ -87,12 +87,83 @@ unsigned int strlen(unsigned char * str)
     return i;
 }
 
+// my cat
+// tolen = 2
+//
+void strcat(char *to, const char *from)
+{
+    unsigned tolen = strlen(to);
+
+    unsigned i = 0;
+    do
+    {
+        to[tolen+i] = from[i];
+    }
+    while(from[i++]);
+}
+
+/**
+ *
+ * text = mycat is cat
+ * pattern = cat
+ *
+ */
+int strstr(const char *text, const char *pattern)
+{
+    unsigned i = 0;
+    unsigned j = 0;
+
+    do
+    {
+        if (!pattern[j])
+            return (int) (i - j);
+        if (text[i] == pattern[j])
+            ++j;
+        else
+            j = 0;
+    }
+    while (text[i++]);
+
+    return -1;
+}
+
 int main()
 {
 #if 1
+    char str1[] = "cat my is cat";
+    char str2[] = "dig";
+    cout << "str1=\"" << str1 << "\", " << "size=" << strlen(str1) << endl;
+    cout << "str2=\"" << str2 << "\", " << "size=" << strlen(str2) << endl;
+
+    int i = strstr(str1, str2);
+
+    if (i < 0)
+        cout << "no substr found" << endl;
+    else
+    {
+        cout << "substr pos = " << i << endl;
+        char *p = str1 + i;
+        cout << "str1 left=\"" << p << "\"" << "size=" << strlen(p) << endl;
+    }
+
+#else
+    char str1[30] = "my ZZZZZXXXXXXXXXXXXXXX";
+    str1[3] = 0;
+    char str2[30] = "catt**********************";
+    str2[4] = 0;
+    cout << "str1=\"" << str1 << "\", " << "size=" << strlen(str1) << endl;
+    cout << "str2=\"" << str2 << "\", " << "size=" << strlen(str2) << endl;
+
+    strcat(str1, str2);
+    cout << "str1=\"" << str1 << "\", " << "size=" << strlen(str1) << endl;
+    cout << "str2=\"" << str2 << "\", " << "size=" << strlen(str2) << endl;
+
+
+//#else
     unsigned char str[] = "test string";
     cout << "str=\"" << str << "\", " << "size=" << strlen(str) << endl;
-#else
+
+//#else
     // 8124
     // 1323
     unsigned int a = 0;
