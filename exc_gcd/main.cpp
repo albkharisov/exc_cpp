@@ -2,6 +2,7 @@
 
 using namespace std;
 unsigned mangcd(unsigned a, unsigned b);
+unsigned int gcd(unsigned int a, unsigned int b);
 
 #define MIN(a,b)			((a) < (b) ? (a) : (b))
 #define MAX(a,b)			((a) > (b) ? (a) : (b))
@@ -16,41 +17,12 @@ unsigned int gcd(unsigned int a, unsigned int b)
 
 	c = a % b;
 
-	cout << "gcd... a = " << a << ", b = " << b << ", c = " << c << endl;
+//	cout << "gcd... a = " << a << ", b = " << b << ", c = " << c << endl;
 
 	if (c == 0)
 		return MIN(a, b);
 	else
 		return gcd(b, c);
-}
-
-int main()
-{
-    // 8124
-    // 1323
-    unsigned int a = 0;
-    unsigned int b = 0;
-    cout << "Enter a" << endl;
-    cin >> a;
-    cout << "Enter b" << endl;
-    cin >> b;
-
-    cout << "GCD by pereborom:" << endl;
-
-    cout << "mang = " << mangcd(a, b);
-//    cout << "mang = " << mangcd(b, a);
-
-
-    cout << "GCD:" << endl;
-    unsigned int c = gcd(a, b);
-    cout << "GCD:" << endl;
-    unsigned int d = gcd(b, a);
-
-    cout << endl;
-    cout << "gcd(" << a << ", " << b << ") = " << c << endl;
-    if (c != d)
-        cout << "gcd(" << b << ", " << a << ") = " << d << endl;
-    return 0;
 }
 
 unsigned amas[50];
@@ -88,7 +60,6 @@ unsigned mangcd(unsigned a, unsigned b)
     }
 
     unsigned gcd = 0;
-    unsigned gcdmax = 0;
     for (int i = 0, j = 0; (i < 50) && (j < 50) ; )
     {
         if ((amas[i] > bmas[j]) && (bmas[j+1] != 0))
@@ -106,6 +77,49 @@ unsigned mangcd(unsigned a, unsigned b)
 
 }
 
+unsigned int strlen(unsigned char * str)
+{
+    unsigned int i = 0;
+
+    while(str[i])
+        ++i;
+
+    return i;
+}
+
+int main()
+{
+#if 1
+    unsigned char str[] = "test string";
+    cout << "str=\"" << str << "\", " << "size=" << strlen(str) << endl;
+#else
+    // 8124
+    // 1323
+    unsigned int a = 0;
+    unsigned int b = 0;
+    cout << "Enter a" << endl;
+    cin >> a;
+    cout << "Enter b" << endl;
+    cin >> b;
+
+//    cout << "GCD by pereborom:" << endl;
+//
+//    cout << "mang = " << mangcd(a, b) << endl;
+//    cout << "mang = " << mangcd(b, a);
+
+
+    cout << "GCD:" << endl;
+    unsigned int c = gcd(a, b);
+    cout << "GCD:" << endl;
+    unsigned int d = gcd(b, a);
+
+    cout << endl;
+    cout << "gcd(" << a << ", " << b << ") = " << c << endl;
+    if (c != d)
+        cout << "gcd(" << b << ", " << a << ") = " << d << endl;
+    return 0;
+#endif
+}
 
 
 
