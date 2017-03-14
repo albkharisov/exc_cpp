@@ -1,7 +1,6 @@
 #include <iostream>
-using namespace std;
 
-#include <cstddef>
+using namespace std;
 
 template <typename T>
 class Array
@@ -11,7 +10,7 @@ public:
                    const T& value = T())
                     : mas (new T[size]), sz(size)
     {
-        for (int i = 0; i < size; ++i)
+        for (unsigned int i = 0; i < size; ++i)
         {
             mas[i] = value;
         }
@@ -22,7 +21,7 @@ public:
     {
 //        sz = other.sz;
 //        mas = new Array[sz];
-        for (int i = 0; i < sz; ++i)
+        for (unsigned int i = 0; i < sz; ++i)
         {
             mas[i] = other.mas[i];
         }
@@ -73,49 +72,35 @@ public:
     size_t sz;
 };
 
-class obj
+bool less1(int a, int b);
+bool less1(int a, int b) { return a < b; }
+struct Greater { bool operator()(int a, int b) const { return b < a; } };
+
+template <typename var_t, class func_t>
+var_t minimum(Array<var_t> arr, func_t func)
 {
-public:
-    obj(int i = 88) : a(i)
+    int ind = 0;
+    for (unsigned int i = 0; i < arr.size(); ++i)
     {
-        cout << "DBG: " << "obj:constructor(" << a << "), cnt=" << ++cnt << endl;
-    }
-    ~obj()
-    {
-        cout << "DBG: " << "obj:destructor(" << a << "), cnt=" << --cnt << endl;
-    }
-    int a;
-
-    static void resetcnt(void)
-    {
-        cnt = 0;
+        if (func(arr[i], arr[ind]))
+            ind = i;
     }
 
-    static int cnt;
-    obj(const obj & other)
-        : a(other.a)
-    {
-        cout << "DBG: " << "obj:constructor_copy(" << a << "), cnt=" << ++cnt << endl;
-    }
-
-private:
-//    obj& operator=(const obj & other) { return *this; }
-};
-int obj::cnt;
+    return arr[ind];
+}
 
 int main()
 {
-    Array<obj> a(15, 7);
-    a[1] = 15;
-    for (int i = 0; i < 15 ; ++i)
-    {
-        cout << a[i].a << endl;
-    }
+    Array<int> ints(3);
+    ints[0] = 10;
+    ints[1] = 2;
+    ints[2] = 15;
+    int min = minimum(ints, less1); // в min должно попасть число 2
+    int max = minimum(ints, Greater()); // в max должно попасть число 15
+
+    cout << "min=" << min << endl;
+    cout << "max=" << max << endl;
     return 0;
 }
-
-
-
-
 
 
