@@ -15,13 +15,13 @@ void rotate(int a[], unsigned size, int shift)
         swap4ik(&a[0], &a[size-1]);
         for (int i = 0; i < size-2; ++i)
             swap4ik(&a[i+1], &a[i]);
-        cout << endl;
+//        cout << endl;
     }
 }
 
 void swap4ik(int * a, int * b)
 {
-    cout << "a=" << *a << " b=" << *b << endl;
+//    cout << "a=" << *a << " b=" << *b << endl;
     *a = *a + *b;
     *b = *a - *b;
     *a = *a - *b;

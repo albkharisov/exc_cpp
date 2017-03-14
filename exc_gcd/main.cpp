@@ -120,7 +120,11 @@ int strstr(const char *text, const char *pattern)
         if (text[i] == pattern[j])
             ++j;
         else
+        {
             j = 0;
+            if (text[i] == pattern[j])
+                ++j;
+        }
     }
     while (text[i++]);
 
@@ -130,8 +134,8 @@ int strstr(const char *text, const char *pattern)
 int main()
 {
 #if 1
-    char str1[] = "cat my is cat";
-    char str2[] = "dig";
+    char str1[] = "hhello";
+    char str2[] = "hello";
     cout << "str1=\"" << str1 << "\", " << "size=" << strlen(str1) << endl;
     cout << "str2=\"" << str2 << "\", " << "size=" << strlen(str2) << endl;
 
