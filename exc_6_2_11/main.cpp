@@ -99,17 +99,42 @@ struct ValueHolder : ICloneable
 
     ValueHolder* clone() const
     {
-//        void* a;
-//        a = operator new (sizeof(T));
-//        new (a) T(data_);
-//        return (T *) a;
         return new ValueHolder(data_);
     }
     T data_;
 };
 
-class Any/* : ICloneable*/
+struct ValueHolder2 : ICloneable
 {
+    ValueHolder2(const int& vi)
+                : i(vi)
+    {}
+
+    ValueHolder2* clone() const
+    {
+        cout << "vh2" << endl;
+        return new ValueHolder2(i);
+    }
+    int i;
+};
+
+struct ValueHolder3 : ICloneable
+{
+    ValueHolder3(const int& vi)
+                : i(vi)
+    {}
+
+    ValueHolder3* clone() const
+    {
+        cout << "vh3" << endl;
+        return new ValueHolder3(i);
+    }
+    int i;
+};
+
+class Any
+{
+    ICloneable *pvh;
 public:
     /**
      ¬ классе Any должен быть конструктор,
@@ -117,11 +142,7 @@ public:
      чтобы работал следующий код:
         Any empty; // empty ничего не хранит
     */
-    Any ()
-        : pvh(0)
-    {
-//        cout << "const empty" << endl;
-    }
+    Any () : pvh(0) {}
 
     /**
      ¬ классе Any должен быть шаблонный
@@ -132,11 +153,7 @@ public:
     */
 
     template <typename T1>
-    Any (const T1& t)
-        : pvh(new ValueHolder<T1> (t))
-    {
-//        cout << "const T" << endl;
-    }
+    Any (const T1& t) : pvh(new ValueHolder<T1> (t)) {}
 
     /**
      Ќе забудьте про деструктор. ¬се выделенные
@@ -145,10 +162,9 @@ public:
 
     ~Any ()
     {
-//        cout << "destr" << endl;
         if (pvh)
         {
-            delete (ValueHolder<char> *) pvh;
+            delete pvh;
             pvh = 0;
         }
     }
@@ -161,9 +177,8 @@ public:
 
     Any (const Any& other)
     {
-//        cout << "const copy" << endl;
         if (other.pvh)
-            this->pvh = ((ValueHolder<char> *) other.pvh)->clone();
+            this->pvh = other.pvh->clone();
         else
             this->pvh = 0;
     }
@@ -178,32 +193,22 @@ public:
     */
     Any& operator=(const Any & other)
     {
-//        cout << "op =" << endl;
         if (this != &other)
         {
-//            delete pvh;
-//            cout << "delete pvh" << endl;
-            this->~Any();
+            if (pvh)
+            {
+                delete pvh;
+                pvh = 0;
+            }
 
             if (other.pvh)
-                this->pvh = ((ValueHolder<char> *) other.pvh)->clone();
+                this->pvh = other.pvh->clone();
             else
                 this->pvh = 0;
         }
         return *this;
     }
 
-    template <typename T2>
-    T2 * cast()
-    {
-//        if (pvh == 0)
-//            cout << "pvh == 0" << endl;
-        ValueHolder<T2> *pt = dynamic_cast<ValueHolder<T2> *> ((ValueHolder<T2> *)pvh);
-        if (!pt)
-            return 0;
-        else
-            return &pt->data_;
-    }
     /**
      Ќу и наконец, мы хотим уметь получать хранимое
      значение, дл€ этого определите в классе Any
@@ -237,9 +242,15 @@ public:
      один виртуальный метод, и в шаблоне ValueHolder такой
      как раз имеетс€.
      */
-
-private:
-     void *pvh;
+    template <typename T2>
+    T2 * cast()
+    {
+        ValueHolder<T2> *pt = dynamic_cast<ValueHolder<T2> *> (pvh);
+        if (!pt)
+            return 0;
+        else
+            return &pt->data_;
+    }
 };
 
 /*** T E S T S ***/
@@ -492,7 +503,7 @@ int main()
 
 
 
-#elif 1
+#elif 0
 
 
 	test0();
@@ -506,36 +517,61 @@ int main()
 
 #else
 
-    obj oA(17);
-	Any aEmpty(oA);
-//	Any bEmpty = aEmpty;
-
-//    my_func(aEmpty);
-
-
-    obj2 o2("test1");
-    obj2 o21("test2");
-    cout << "str(" << o2.sz << ") \"" << o2.ptr << "\"" << endl;
-    cout << "==================" << endl;
-    Any a(o2);
-    Any b(o21);
-    cout << "==================" << endl;
-    cout << "a:" << a.cast<obj2>()->ptr << endl;
-    cout << "==================" << endl;
-    cout << "b:" << b.cast<obj2>()->ptr << endl;
-    cout << "==================" << endl;
-
-    b = a;
-    b = aEmpty;
-    Any c = aEmpty;
-    cout << "==================" << endl;
-    cout << "a:" << a.cast<obj2>()->ptr << endl;
-    cout << "==================" << endl;
+//    obj oA(17);
+//	Any aEmpty(oA);
+////	Any bEmpty = aEmpty;
+//
+////    my_func(aEmpty);
+//
+//
+//    obj2 o2("test1");
+//    obj2 o21("test2");
+//    cout << "str(" << o2.sz << ") \"" << o2.ptr << "\"" << endl;
+//    cout << "==================" << endl;
+//    Any a(o2);
+//    Any b(o21);
+//    cout << "==================" << endl;
+//    cout << "a:" << a.cast<obj2>()->ptr << endl;
+//    cout << "==================" << endl;
 //    cout << "b:" << b.cast<obj2>()->ptr << endl;
-    cout << "b:" << b.cast<obj>()->a << endl;
-    cout << "==================" << endl;
-    cout << "c:" << c.cast<obj>()->a << endl;
-    cout << "==================" << endl;
+//    cout << "==================" << endl;
+//
+//    b = a;
+//    b = aEmpty;
+//    Any c = aEmpty;
+//    cout << "==================" << endl;
+//    cout << "a:" << a.cast<obj2>()->ptr << endl;
+//    cout << "==================" << endl;
+////    cout << "b:" << b.cast<obj2>()->ptr << endl;
+//    cout << "b:" << b.cast<obj>()->a << endl;
+//    cout << "==================" << endl;
+//    cout << "c:" << c.cast<obj>()->a << endl;
+//    cout << "==================" << endl;
+
+    ValueHolder2 vh2(102);
+    ValueHolder3 vh3(103);
+
+    Any a2(vh2);
+    Any a3(vh3);
+
+    ValueHolder3 * pa3 = a3.cast<ValueHolder3>();
+
+    a2 = a3;
+//    ValueHolder2 * pa2 = a2.cast<ValueHolder2>();
+    ValueHolder3 * pa2 = a2.cast<ValueHolder3>();
+
+    if (pa2)
+        cout << "*pa2=" << pa2->i << endl;
+    else
+        cout << "pa2==NULL" << endl;
+
+    if (pa3)
+        cout << "*pa3=" << pa3->i << endl;
+    else
+        cout << "pa3==NULL" << endl;
+
+
+    cout << "=======================" << endl;
 
 #endif
 
