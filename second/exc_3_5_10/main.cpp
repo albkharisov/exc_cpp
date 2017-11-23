@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
+#include <memory>
 
 using namespace std;
 
@@ -19,24 +20,37 @@ Iterator remove_if1(Iterator p, Iterator q, Pred pred)
 struct ElementN
 {
     explicit ElementN(size_t n)
-        : n(n), i(0)
+        : n(n), pi(new size_t(0))
     {}
 
     template<class T>
-    bool operator()(T const& t) { return (i++ == n); }
+    bool operator()(T const& t) { return ((*pi)++ == n); }
 
     size_t n;
-    size_t i;
+    std::shared_ptr<size_t> pi;
 };
 
 int main()
 {
-    std::vector<int> v = { 0,1,2,3,4,5,6,7,8,9,10,11,12 };
+    {
+        std::vector<int> v = { 0,1,2,3,4,5,6,7,8,9,10,11,12 };
 
-    v.erase(remove_if1(v.begin(), v.end(), ElementN(3)), v.end());
+        v.erase(remove_if1(v.begin(), v.end(), ElementN(3)), v.end());
 
-    for (int i: v)
-        std::cout << i << ' ';
+        for (int i: v)
+            std::cout << i << ' ';
+    }
+
+    std::cout << endl;
+
+    {
+        std::vector<int> v1 = { 0,1,2,3,4,5,6,7,8,9,10,11,12 };
+
+        v1.erase(remove_if1(v1.begin(), v1.end(), ElementN(3)), v1.end());
+
+        for (int i: v1)
+            std::cout << i << ' ';
+    }
 
     return 0;
 }
