@@ -84,68 +84,86 @@ struct Quantity<Dimension<i1,i2,i3,i4,i5,i6,i7>>
         type k(dbl - bb.dbl);
         return k;
     }
-#if 0
-    template<typename A>
-    auto operator *(A bb) -> typename Zip<Quantity::type, A, Plus>::type
-    {
-        using TYPE = typename Zip<Quantity::type, A, Plus>::type;
-        TYPE k(dbl * bb.dbl);
-        return k;
-    }
-#else
+
     template<int j1, int j2, int j3, int j4, int j5, int j6, int j7>
     auto operator *(Quantity<IntList<j1,j2,j3,j4,j5,j6,j7>> bb)
-        -> typename Quantity<
-                             typename Zip<typeIntList, IntList<j1,j2,j3,j4,j5,j6,j7>, Plus>::type
-                            >::type
+        -> typename Quantity<typename Zip<typeIntList, IntList<j1,j2,j3,j4,j5,j6,j7>, Plus>::type>::type
     {
         using TYPE = typename Zip<typeIntList, IntList<j1,j2,j3,j4,j5,j6,j7>, Plus>::type;
         Quantity<TYPE> k(dbl * bb.dbl);
         return k;
     }
-#endif
 
-    template<typename A>
-    auto operator /(A a) -> typename Zip<Quantity::type, A, Minus>::type
+    template<int j1, int j2, int j3, int j4, int j5, int j6, int j7>
+    auto operator /(Quantity<IntList<j1,j2,j3,j4,j5,j6,j7>> bb)
+        -> typename Quantity<typename Zip<typeIntList, IntList<j1,j2,j3,j4,j5,j6,j7>, Minus>::type>::type
     {
-        using TYPE = typename Zip<Quantity::type, A, Minus>::type;
-        TYPE k(dbl / a.dbl);
+        using TYPE = typename Zip<typeIntList, IntList<j1,j2,j3,j4,j5,j6,j7>, Minus>::type;
+        Quantity<TYPE> k(dbl / bb.dbl);
         return k;
     }
 
     Quantity() : dbl(0) {}
     explicit Quantity(double dbl) : dbl(dbl) {}
-    double value () { return dbl; }
+    double value () const { return dbl; }
     double dbl;
 };
 
-
+#if 0
 template<typename A>
-auto operator *(double a, A b) -> typename Zip<A, Quantity<>::type, Plus>::type
+auto operator *(double a, A b) -> decltype(operator *(Quantity<Dimension<>>(a), b))
 {
     Quantity<> c(a);
     return c * b;
 }
-
 template<typename A>
-auto operator *(A b, double a) -> typename Zip<A, Quantity<>::type, Plus>::type
+auto operator *(A a, double b) -> decltype(operator *(a, Quantity<Dimension<>>(b)))
 {
+    Quantity<> c(b);
     return a * b;
 }
-
 template<typename A>
-auto operator /(double a, A b) -> typename Zip<A, Quantity<>::type, Minus>::type
+auto operator /(double a, A b) -> decltype(operator /(Quantity<Dimension<>>(a), b))
 {
     Quantity<> c(a);
     return c / b;
 }
-
 template<typename A>
-auto operator /(A b, double a) -> typename Zip<A, Quantity<>::type, Minus>::type
+auto operator /(A a, double b) -> decltype(operator /(Quantity<Dimension<>>(b), a))
+{
+    Quantity<> c(b);
+    return a / c;
+}
+#else
+template<int ...I>
+auto operator *(double a, Quantity<IntList<I...>> b)
+        -> typename Quantity<typename Zip<Dimension<>, IntList<I...>, Plus>::type>::type
 {
     Quantity<> c(a);
-    return b / c;
+    return c * b;
 }
+template<int ...I>
+auto operator *(Quantity<IntList<I...>> a, double b)
+        -> typename Quantity<typename Zip<IntList<I...>, Dimension<>, Plus>::type>::type
+{
+    Quantity<> c(b);
+    return a * c;
+}
+template<int ...I>
+auto operator /(double a, Quantity<IntList<I...>> b)
+        -> typename Quantity<typename Zip<Dimension<>, IntList<I...>, Minus>::type>::type
+{
+    Quantity<> c(a);
+    return c / b;
+}
+template<int ...I>
+auto operator /(Quantity<IntList<I...>> a, double b)
+        -> typename Quantity<typename Zip<IntList<I...>, Dimension<>, Minus>::type>::type
+{
+    Quantity<> c(b);
+    return a / c;
+}
+#endif
 
 
 
@@ -183,19 +201,39 @@ int main()
 
     double d1 = 2;
     LengthQ m4(d1);
-    LengthQ m5{5};
+    MassQ m5{5};
 
-    auto m6 = m5 * m4;
+    auto m6 = m5 / m4;
     auto m7 = m5;
     PRINT(m4);
     PRINT(m5);
-    print(m6, "m5 * m4");
+    print(m6, "m5 / m4");
     PRINT(m7);
 
+    auto m8(m6);
+    PRINT(m8);
+
+    auto p = d1 * m4;
+    auto q = m4 * d1;
+    auto z = m4 * m4;
+    auto l = m4 * m5;
+
+
+    auto const c = 1.0 / LengthQ(1) / MassQ(1 + 1 / 2) / 5.0;
+    cout << c.value() << endl;
+
+    PRINT(c);
+
+/*
+
+no match for 'operator*' (
+    operand types are 'Quantity<IntList<1, 0, 0, 0, 0, 0, 0> >::type {aka Quantity<IntList<1, 0, 0, 0, 0, 0, 0> >}'
+                  and 'MassQ                                         {aka Quantity<IntList<0, 1, 0, 0, 0, 0, 0> >}')|
 
 
 
 
+*/
 
     return 0;
 }
